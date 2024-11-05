@@ -11,14 +11,17 @@ import (
 
 type Handler struct {
 	stdout     io.Writer
-	calculator *calc.Addition
+	calculator calc.Calculator
 }
 
-func NewHandler(stdout io.Writer, calculator *calc.Addition) *Handler {
+func NewHandler(stdout io.Writer, calculator calc.Calculator) *Handler {
 	return &Handler{stdout, calculator}
 }
 
 func (this *Handler) Handle(args []string) error {
+	if this.calculator == nil {
+		return errUnsupportedOperation
+	}
 	if len(args) != 2 {
 		return errWrongArgCount
 	}
@@ -39,7 +42,8 @@ func (this *Handler) Handle(args []string) error {
 }
 
 var (
-	errWrongArgCount   = errors.New("usage: calculator <a> <b>")
-	errInvalidArgument = errors.New("invalid argument")
-	errOutputFailure   = errors.New("output failure")
+	errWrongArgCount        = errors.New("usage: calculator -op <op> <a> <b>")
+	errInvalidArgument      = errors.New("invalid argument")
+	errOutputFailure        = errors.New("output failure")
+	errUnsupportedOperation = errors.New("unsupported operation")
 )
