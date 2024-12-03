@@ -33,3 +33,5 @@ NaN,+,3
 	}
 	t.Log(logBuffer.String())
 }
+
+//TODO missing test

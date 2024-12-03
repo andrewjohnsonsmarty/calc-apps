@@ -27,10 +27,11 @@ func NewCSVHandler(logger *log.Logger, input io.Reader, output io.Writer, calcul
 }
 
 func (this *CSVHandler) Handle() error {
+	var err error
+	var record []string
 	this.input.FieldsPerRecord = 3
-	defer this.output.Flush()
 	for {
-		record, err := this.input.Read()
+		record, err = this.input.Read()
 		if err == io.EOF {
 			break
 		}
@@ -56,8 +57,11 @@ func (this *CSVHandler) Handle() error {
 			continue
 		}
 		c := calculator.Calculate(a, b)
-		this.output.Write(append(record, strconv.Itoa(c)))
-		// TODO: if err != nil...
+		err = this.output.Write(append(record, strconv.Itoa(c)))
+		if err != nil {
+			break
+		}
 	}
+	this.output.Flush()
 	return this.output.Error()
 }
